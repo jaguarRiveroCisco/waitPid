@@ -13,9 +13,12 @@ namespace process::controller
     void terminatePid(const std::string &input);
     void doCommand(const std::string &input);
     void printContext(int numProcesses = -1, const std::string &processType = "", int rndUpper = -1);
+    void printHelp();
 
     void main()
     {
+        printHelp();
+
         std::string input;
         while (process::ControllerBase::running())
         {

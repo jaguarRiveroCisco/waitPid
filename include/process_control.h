@@ -4,7 +4,6 @@
 namespace process::controller
 {
     void main();
-    void printHelp();
     void parseArguments(int argc, char *argv[], int &numProcesses, std::string &processType, int &rndUpper);
 } // namespace process::controller
 

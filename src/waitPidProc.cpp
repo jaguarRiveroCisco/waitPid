@@ -18,8 +18,6 @@ auto main(int argc, char *argv[]) -> int
 
     process::controller::parseArguments(argc, argv, numProcesses, processType, rndUpper);
 
-    process::controller::printHelp(); // Call to printHelp
-
     process::ProcessSimulator::setRndUpper(rndUpper); // Call to setRndUpper with the parsed value
 
     std::thread readerThread(process::controller::main);

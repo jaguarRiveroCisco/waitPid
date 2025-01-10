@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
+# Process States: In addition to S (sleeping) and R (running), there are other process states such as D (uninterruptible sleep), 
+# Z (zombie), T (stopped), and I (idle).
+# Foreground Process Group (+): A process marked with a + is associated with a terminal and is likely the one that receives 
+# input from the user.
 
 previous_output=""
 
 while true; do
-  current_output=$(ps -ax -o pid,tty,stat,comm,args | egrep "ProcessController" | grep -v grep)
+  current_output=$(ps -ax -o pid,stat,comm,args | egrep "ProcessController" | grep -v grep)
 
   if [[ "$current_output" != "$previous_output" ]]; then
     echo  # Print an empty line to indicate a change
