@@ -16,7 +16,8 @@ namespace process
 
     void Controller::createHandlers_(int numHandlers)
     {
-        std::cout << "Creating " << numHandlers << " child processes of type " << processType_ << ".\n";
+        std::cout << "\n********** Creating " << numHandlers << " child processes of type '" << processType_
+                  << "' **********\n\n";
 
         for (int i = 0; i < numHandlers; ++i)
         {

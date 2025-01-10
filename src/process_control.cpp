@@ -12,6 +12,7 @@ namespace process::controller
     void killPid(const std::string &input);
     void terminatePid(const std::string &input);
     void doCommand(const std::string &input);
+    void printContext(int numProcesses = -1, const std::string &processType = "", int rndUpper = -1);
 
     void main()
     {
@@ -79,10 +80,29 @@ namespace process::controller
             rndUpper = 10;
         }
 
-        std::cout << "==================== Parsed Arguments ====================\n"
-                  << " Number of Processes : " << numProcesses << "\n"
-                  << " Process Type        : " << processType << "\n"
-                  << " Random Upper Limit  : " << rndUpper << "\n"
+        printContext(numProcesses, processType, rndUpper);
+    }
+
+    void printContext(int numProcesses, const std::string &processType, int rndUpper)
+    {
+        // Static variables to store the latest values
+        static int         lastNumProcesses = 0;
+        static std::string lastProcessType  = "unknown";
+        static int         lastRndUpper     = 0;
+
+        // Update static variables only if new values are provided
+        if (numProcesses != -1)
+            lastNumProcesses = numProcesses;
+        if (!processType.empty())
+            lastProcessType = processType;
+        if (rndUpper != -1)
+            lastRndUpper = rndUpper;
+
+        // Print the stored context
+        std::cout << "========================= Context =========================\n"
+                  << " Number of Processes : " << lastNumProcesses << "\n"
+                  << " Process Type        : " << lastProcessType << "\n"
+                  << " Random Upper Limit  : " << lastRndUpper << "\n"
                   << " Display Flag        : " << (g_display ? "Enabled" : "Disabled") << "\n"
                   << " Respawn             : " << (process::ControllerBase::respawn() ? "Enabled" : "Disabled") << "\n"
                   << "==========================================================\n";
@@ -92,46 +112,56 @@ namespace process::controller
     {
         if (!input.empty())
         {
+            const std::string separator = "----------------------------------------";
             if (input == "print on")
             {
                 g_display = true;
-                std::cout << "Display progress turned on." << std::endl;
+                std::cout << separator << "\n Display progress turned ON.\n" << separator << std::endl;
+            }
+            else if (input == "context")
+            {
+                printContext();
             }
             else if (input == "print off")
             {
                 g_display = false;
-                std::cout << "Display progress turned off." << std::endl;
+                std::cout << separator << "\n Display progress turned OFF.\n" << separator << std::endl;
             }
             else if (input == "exit")
             {
-                process::ControllerBase::running() = false; // Set running to false to signal the main thread
-                std::cout << "Program signalled to exiting once the next process is done" << std::endl;
+                process::ControllerBase::running() = false;
+                std::cout << separator << "\n Program signaled to exit once the next process is done.\n"
+                          << separator << std::endl;
             }
             else if (input == "terminate all")
             {
-                process::ControllerBase::running() = false; // Set running to false to signal the main thread
-                std::cout << "Terminating all processes and exiting the program." << std::endl;
+                process::ControllerBase::running() = false;
+                std::cout << separator << "\n Terminating all processes and exiting the program.\n"
+                          << separator << std::endl;
                 process::Controller::terminateAll();
             }
-            else if (input.rfind("terminate ", 0) == 0) // Check if input starts with "terminate "
+            else if (input.rfind("terminate ", 0) == 0)
             {
-                std::cout << "Terminating process with PID: " << input.substr(10) << std::endl;
+                std::cout << separator << "\n Terminating process with PID: " << input.substr(10) << "\n"
+                          << separator << std::endl;
                 terminatePid(input);
             }
             else if (input == "kill all")
             {
-                process::ControllerBase::running() = false; // Set running to false to signal the main thread
-                std::cout << "Killing all processes and exiting the program." << std::endl;
+                process::ControllerBase::running() = false;
+                std::cout << separator << "\n Killing all processes and exiting the program.\n"
+                          << separator << std::endl;
                 process::Controller::killAll();
             }
-            else if (input.rfind("kill ", 0) == 0) // Check if input starts with "kill "
+            else if (input.rfind("kill ", 0) == 0)
             {
-                std::cout << "Killing process with PID: " << input.substr(5) << std::endl;
+                std::cout << separator << "\n Killing process with PID: " << input.substr(5) << "\n"
+                          << separator << std::endl;
                 killPid(input);
             }
             else if (input == "display pids")
             {
-                std::cout << "Displaying all current PIDs:" << std::endl;
+                std::cout << separator << "\n Displaying all current PIDs:\n" << separator << std::endl;
                 process::Controller::displayAllPids();
             }
             else if (input == "help")
@@ -141,27 +171,30 @@ namespace process::controller
             else if (input == "respawn on")
             {
                 process::ControllerBase::respawn() = true;
-                std::cout << "Respawn turned on." << std::endl;
+                std::cout << separator << "\n Respawn turned ON.\n" << separator << std::endl;
             }
             else if (input == "respawn off")
             {
                 process::ControllerBase::respawn() = false;
-                std::cout << "Respawn turned off." << std::endl;
+                std::cout << separator << "\n Respawn turned OFF.\n" << separator << std::endl;
             }
             else
             {
-                std::cout << "You entered: " << input << std::endl;
+                std::cout << separator << "\n You entered: " << input << "\n" << separator << std::endl;
             }
         }
     }
     void printHelp()
     {
-        std::cout << "Process Control Help Menu\n"
-                  << "==========================\n"
+        std::cout << "==========================================================\n"
+                  << "Process Control Help Menu\n"
+                  << "==========================================================\n"
                   << "Available commands:\n"
+                  << "  context         - Display the current context\n"
                   << "  print on        - Turn on display progress\n"
                   << "  print off       - Turn off display progress\n"
-                  << "  exit            - Sets exist signal to gracefully exits the program once the next process is done\n"
+                  << "  exit            - Sets exist signal to gracefully exits the program once the next process is "
+                     "done\n"
                   << "  terminate all   - Terminate all processes and exit the program\n"
                   << "  terminate <pid> - Terminate a specific process by PID\n"
                   << "  kill all        - Kill all processes and exit the program\n"
