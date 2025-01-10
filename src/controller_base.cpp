@@ -14,8 +14,6 @@ namespace process
         return &instance;
     }
     
-    std::string ControllerBase::receiveCreationMessage() { return Communicator::getInstance().receiveCreationMessage(); }
-
     void ControllerBase::init(Synchro *synchro, std::unique_ptr<IProcess> process)
     {
         if (synchro == nullptr)

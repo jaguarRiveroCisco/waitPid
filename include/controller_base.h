@@ -16,7 +16,6 @@ namespace process
             static void  displayAllPids();
             static Synchro *synchro();
             void            init(Synchro *synchro, std::unique_ptr<IProcess> process);
-            std::string     receiveCreationMessage();
             void            start();
             static void     setProcessType(const std::string &processType);
 
