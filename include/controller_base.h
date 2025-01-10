@@ -32,16 +32,6 @@ namespace process
             std::unique_ptr<IProcess> process_;
             static bool               running_;
             static bool               respawn_;
-            static void               signalHandler(int signum)
-            {
-                std::cout << "Process " << getpid() << " received signal " << signum << std::endl;
-                exit(signum);
-            }
 
-            void setupSignalHandling()
-            {
-                signal(SIGTERM, ControllerBase::signalHandler);
-                signal(SIGINT, ControllerBase::signalHandler);
-            }
     };
 }

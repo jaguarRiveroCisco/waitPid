@@ -8,7 +8,7 @@
 #include "process_helper.h"
 namespace process
 {
-    int           ProcessSimulator::rndUpper_ = 10;
+    int           ProcessSimulator::rndUpper_ = 20;
     constexpr int baseSleepDuration       = 10;
 
     void ProcessSimulator::setRndUpper(int rndUpper)
@@ -22,13 +22,27 @@ namespace process
         std::srand(std::time(nullptr) ^ getpid()); // Seed using time and PID to ensure different seeds
         sleepDuration_ = std::rand() % rndUpper_ + baseSleepDuration; // Random sleep duration between 1 and x seconds
     }
-
+    
     void ProcessSimulator::work()
     {
         setSleepDuration();
         Communicator::getInstance().sendCreationMessage(sleepDuration_);
+        
+        auto startTime = std::chrono::steady_clock::now();
+        auto endTime = startTime + std::chrono::seconds(sleepDuration_);
+    
+        std::cout << "Simulated process is working: " << getpid() << " Sleep duration " << sleepDuration_ << std::endl;
         // Child process
-        std::this_thread::sleep_for(std::chrono::seconds(sleepDuration_)); // Simulate some work
+        while (continue_)
+        {
+            auto currentTime = std::chrono::steady_clock::now();
+            if (currentTime >= endTime)
+            {
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Simulate some work
+        }
+        std::cout << "Simulated process is done: " << getpid() << std::endl;
         _exit(0); // Ensure the child process exits immediately
     }
 } // namespace process

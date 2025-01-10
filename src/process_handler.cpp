@@ -53,8 +53,8 @@ namespace process
 
         std::string messageText =
                 handler->receiveCreationMessage() + " Number of processes: " + std::to_string(numProcesses_);
-        if (g_display)
-            std::cout << messageText << std::endl;
+        //if (g_display)
+        //    std::cout << messageText << std::endl;
         handler->start();
         handlers_.push_back(std::move(handler));
     }
@@ -81,8 +81,8 @@ namespace process
                     {
                         if(process::Controller::respawn())
                         {
-                            if(g_display)
-                                std::cout << "\trespawn!  ";
+                            //if(g_display)
+                            //    std::cout << "\trespawn!  ";
                             createHandler();
                         }
                     }

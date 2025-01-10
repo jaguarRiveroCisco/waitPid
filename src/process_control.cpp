@@ -72,7 +72,16 @@ namespace process::controller
             std::cerr << "Random upper limit must be greater than 10. Defaulting to 10.\n";
             rndUpper = 10;
         }
+
+        std::cout << "==================== Parsed Arguments ====================\n"
+                  << " Number of Processes : " << numProcesses << "\n"
+                  << " Process Type        : " << processType << "\n"
+                  << " Random Upper Limit  : " << rndUpper << "\n"
+                  << " Display Flag        : " << (g_display ? "Enabled" : "Disabled") << "\n"
+                  << " Respawn             : " << (process::ControllerBase::respawn() ? "Enabled" : "Disabled") << "\n"
+                  << "==========================================================\n";
     }
+
     void main()
     {
         std::string input;
