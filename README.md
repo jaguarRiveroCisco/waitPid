@@ -61,6 +61,8 @@ Once the program is running, you can use the following commands to control proce
 - **`terminate <pid>`**: Terminate a specific process by PID.
 - **`kill all`**: Kill all processes and exit the program.
 - **`kill <pid>`**: Kill a specific process by PID.
+- **`respawn on`**: Turn on respawn.
+- **`respawn off`**: Turn off respawn.
 - **`display pids`**: Display all current process IDs (PIDs).
 - **`help`**: Display the help message with available commands.
 
