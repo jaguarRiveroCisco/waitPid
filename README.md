@@ -4,6 +4,11 @@
 
 The Process Management Program is a C++ application designed to handle and monitor multiple child processes. It utilizes threading, inter-process communication (IPC), and synchronization to efficiently manage process creation and lifecycle events.
 
+This program manages and monitors a specified number of processes through multi-threading. It maintains a constant number of processes by respawning them as needed. The program can create both simulated processes, which sleep for random durations, and real processes that perform tasks. Each process is managed by a ProcessHandler to ensure its lifecycle is controlled.
+
+
+Inter-process communication (IPC) is used for message exchange between processes, with synchronization achieved through mutexes and condition variables. A console-based controller allows users to interact with processes, enabling commands to view status, terminate processes by PID, or manage all processes.
+
 ## Key Components
 
 - **Messenger**: Facilitates message passing between processes for communication.

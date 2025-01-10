@@ -8,10 +8,17 @@ namespace process
     {
 
     public:
-        virtual ~IProcess() = default;
+        virtual ~IProcess()
+        {
+            auto endTime  = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_).count();
+                std::cout << " :( Child process " << getpid() << " lifetime: " << duration << " milliseconds." << std::endl;
+        }
+
         virtual void work()         = 0;
 
     protected:
+        IProcess() = default;
         void setupSignalHandling()
         {
             signal(SIGTERM, IProcess::signalHandler);
@@ -19,6 +26,7 @@ namespace process
         }
 
         std::atomic<bool> continue_{true};
+        std::chrono::time_point<std::chrono::high_resolution_clock> startTime_ = std::chrono::high_resolution_clock::now();
 
     private:
         static void signalHandler(int signum)

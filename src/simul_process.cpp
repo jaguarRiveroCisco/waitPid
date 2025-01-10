@@ -28,21 +28,22 @@ namespace process
         setSleepDuration();
         Communicator::getInstance().sendCreationMessage(sleepDuration_);
         
-        auto startTime = std::chrono::steady_clock::now();
-        auto endTime = startTime + std::chrono::seconds(sleepDuration_);
-    
+        startTime_ = std::chrono::high_resolution_clock::now();
+        auto endTime = startTime_ + std::chrono::seconds(sleepDuration_);
+
         std::cout << "Simulated process is working: " << getpid() << " Sleep duration " << sleepDuration_ << std::endl;
         // Child process
         while (continue_)
         {
-            auto currentTime = std::chrono::steady_clock::now();
+            auto currentTime = std::chrono::high_resolution_clock::now();
             if (currentTime >= endTime)
             {
                 break;
             }
             std::this_thread::sleep_for(std::chrono::seconds(1)); // Simulate some work
         }
-        std::cout << "Simulated process is done: " << getpid() << std::endl;
+        auto lifetime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - startTime_).count();
+        std::cout << "Simulated process is done: " << getpid() << " Lifetime: " << lifetime << " seconds." << std::endl;
         _exit(0); // Ensure the child process exits immediately
     }
 } // namespace process

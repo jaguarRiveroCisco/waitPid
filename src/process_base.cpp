@@ -10,16 +10,15 @@ namespace process
 {
     size_t BaseHandler::processCounter_ = 0;
 
-    BaseHandler::BaseHandler() : startTime_(std::chrono::high_resolution_clock::now()) { ++processCounter_; }
+    BaseHandler::BaseHandler() { ++processCounter_; }
 
     BaseHandler::~BaseHandler()
     {
         --processCounter_;
-        auto endTime  = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_).count();
-        if (g_display)
-            std::cout << " :( Child process " << pid_ << " lifetime: " << duration << " milliseconds. Number of processes "
-                      << processCounter_ << std::endl;
+        if (processCounter_ == 0)
+        {
+            std::cout << "All processes have finished.\n";
+        }
     }
 
     void BaseHandler::displayProcessStatus(int &status)
