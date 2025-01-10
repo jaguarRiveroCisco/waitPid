@@ -13,7 +13,18 @@ namespace process::controller
     void terminatePid(const std::string &input);
     void doCommand(const std::string &input);
 
-    void parseArguments(int argc, char *argv[], int &numProcesses, std::string &processType, int &rndUpper)  
+    void main()
+    {
+        std::string input;
+        while (process::ControllerBase::running())
+        {
+            std::getline(std::cin, input);
+            doCommand(input);
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+    }
+
+    void parseArguments(int argc, char *argv[], int &numProcesses, std::string &processType, int &rndUpper)
     {
         int opt;
         while ((opt = getopt(argc, argv, "n:t:r:d:s:h")) != -1)
@@ -82,18 +93,7 @@ namespace process::controller
                   << "==========================================================\n";
     }
 
-    void main()
-    {
-        std::string input;
-        while (process::ControllerBase::running())
-        {
-            std::getline(std::cin, input);
-            doCommand(input);
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        }
-    }
-
-    void doCommand(const std::string& input)
+    void doCommand(const std::string &input)
     {
         if (!input.empty())
         {
