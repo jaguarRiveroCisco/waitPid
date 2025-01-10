@@ -34,27 +34,22 @@ namespace process::controller
                 case 'n':
                     // Set the number of processes from the argument
                     numProcesses = std::atoi(optarg);
-                    std::cout << "Number of processes: " << numProcesses << std::endl;
                     break;
                 case 't':
                     // Set the process type from the argument
                     processType = optarg;
-                    std::cout << "Process type: " << processType << std::endl;
                     break;
                 case 'r':
                     // Set the random upper limit from the argument
                     rndUpper = std::atoi(optarg);
-                    std::cout << "Random upper limit: " << rndUpper << std::endl;
                     break;
                 case 'd':
                     // Set the display flag from the argument (0 or 1)
                     g_display = std::atoi(optarg) != 0;
-                    std::cout << "Display flag: " << g_display << std::endl;
                     break;
                 case 's':
                     // Set the respawn flag from the argument (0 or 1)
                     process::ControllerBase::respawn() = std::atoi(optarg) != 0;
-                    std::cout << "Respawn flag: " << process::ControllerBase::respawn() << std::endl;
                     break;
                 case 'h':
                 default:
@@ -68,19 +63,19 @@ namespace process::controller
 
         if (numProcesses <= 0)
         {
-            std::cerr << "Number of processes must be greater than 0. Defaulting to 4.\n";
+            std::cerr << "Invalid number of processes (" << numProcesses << "). Setting default to 4.\n";
             numProcesses = 4;
         }
 
         if (processType != "real" && processType != "simul")
         {
-            std::cerr << "Invalid process type: " << processType << ". Defaulting to 'simul'.\n";
+            std::cerr << "Invalid process type (" << processType << "). Setting default to 'simul'.\n";
             processType = "simul";
         }
 
         if (rndUpper < 10)
         {
-            std::cerr << "Random upper limit must be greater than 10. Defaulting to 10.\n";
+            std::cerr << "Random upper limit (" << rndUpper << ") must be at least 10. Setting default to 10.\n";
             rndUpper = 10;
         }
 
