@@ -28,39 +28,35 @@ namespace process
         setSleepDuration();
         Communicator::getInstance().sendCreationMessage(sleepDuration_);
 
-        startTime_   = std::chrono::high_resolution_clock::now();
-        auto endTime = startTime_ + std::chrono::milliseconds(sleepDuration_ * 1000);
+        auto msSleepDuration = sleepDuration_ * 1000;
 
-        std::cout << "Simulated process is working: " << getpid() << " Sleep duration " << sleepDuration_ * 1000
-                  << " ms" << std::endl;
+        auto endTime = startTime_ + std::chrono::milliseconds(msSleepDuration);
+
+        std::cout << "Simulated process is working: " << getpid() << " Sleep duration " << msSleepDuration << " ms"
+                  << std::endl;
 
         // Maximum allowed lifetime to prevent indefinite execution
-        auto maxLifetime =
-                std::chrono::milliseconds(sleepDuration_ * 1000 + 5000); // Add a buffer to the sleep duration
+        auto maxLifetime = std::chrono::milliseconds(msSleepDuration + 5000); // Add a buffer to the sleep duration
+        auto currentTime = std::chrono::high_resolution_clock::now();
 
         while (continue_)
         {
-            auto currentTime = std::chrono::high_resolution_clock::now();
-
             if (currentTime >= endTime)
             {
-                std::cout << "Ending simulation: Reached end time.\n";
+                std::cout << getpid() << " Ending simulation: Reached end time " << "Sleep duration: " << msSleepDuration << " ms\n";
                 break;
             }
 
             if (currentTime - startTime_ >= maxLifetime)
             {
-                std::cout << "Ending simulation: Reached maximum allowed lifetime.\n";
+                std::cout << getpid() << " Ending simulation: Reached maximum allowed lifetime " << maxLifetime.count() << " ms\n";
                 break;
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Simulate some work
+            currentTime = std::chrono::high_resolution_clock::now();
         }
-
-        auto lifetime = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                std::chrono::high_resolution_clock::now() - startTime_)
-                                .count();
-        std::cout << "Simulated process is done: " << getpid() << " Lifetime: " << lifetime << " ms." << std::endl;
+        logLifetime();
         _exit(0); // Ensure the child process exits immediately
     }
 } // namespace process

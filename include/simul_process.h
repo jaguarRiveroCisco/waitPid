@@ -4,7 +4,7 @@
 
 namespace process
 {
-    class ProcessSimulator : public IProcess 
+    class ProcessSimulator : public BaseProcess 
     {
     public:
         void work() override;
