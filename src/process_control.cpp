@@ -102,13 +102,13 @@ namespace process::controller
             lastRndUpper = rndUpper;
 
         // Print the stored context
-        std::cout << "========================= Context =========================\n"
+        std::cout << "\n========================= Context =========================\n"
                   << " Number of Processes : " << lastNumProcesses << "\n"
                   << " Process Type        : " << lastProcessType << "\n"
                   << " Random Upper Limit  : " << lastRndUpper << "\n"
                   << " Display Flag        : " << (g_display ? "Enabled" : "Disabled") << "\n"
                   << " Respawn             : " << (process::ControllerBase::respawn() ? "Enabled" : "Disabled") << "\n"
-                  << "==========================================================\n";
+                  << "==========================================================\n\n";
     }
 
     void doCommand(const std::string &input)
@@ -189,7 +189,7 @@ namespace process::controller
     }
     void printHelp()
     {
-        std::cout << "==========================================================\n"
+        std::cout << "\n==========================================================\n"
                   << "Process Control Help Menu\n"
                   << "==========================================================\n"
                   << "Available commands:\n"
@@ -205,7 +205,7 @@ namespace process::controller
                   << "  display pids    - Display all current PIDs\n"
                   << "  respawn on      - Turn on respawn\n"
                   << "  respawn off     - Turn off respawn\n"
-                  << "  help            - Display this help message\n";
+                  << "  help            - Display this help message\n\n";
     }
 
     void killPid(const std::string &input)

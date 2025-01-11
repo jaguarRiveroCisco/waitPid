@@ -52,9 +52,7 @@ namespace process
             handler->init(synchro(), std::make_unique<ProcessSimulator>());
         }
 
-        std::string messageText = Communicator::getInstance().receiveCreationMessage();
-        if (g_display)
-            std::cout << messageText << std::endl;
+        Communicator::getInstance().receiveCreationMessage(); // we block here until we receive the message
         handler->start();
         handlers_.push_back(std::move(handler));
     }
