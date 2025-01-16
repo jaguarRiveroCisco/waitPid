@@ -1,25 +1,49 @@
 #!/usr/bin/env bash
 
-clean() {
+clean() 
+{
   rm -rf build > /dev/null 2>&1
 }
 
-conf() {
+conf() 
+{
+  clean
   cmake -B build -S . > /dev/null 2>&1
 }
 
-build() {
-  cmake --build build --parallel 3
+conf_ninja() 
+{
+  clean
+#  cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -S . -B build -G Ninja
+  cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -S . -B build -G Ninja
+
 }
+
+conf_unix() 
+{
+  clean
+ # cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -S . -B build
+ # cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -S . -B build -G "Unix Makefiles"
+  cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -S . -B build -G "Unix Makefiles"
+}
+
+build() 
+{
+  cmake --build build --parallel 10
+}
+
 clear
 rm logs/*.log > /dev/null 2>&1
 if [ "$1" == "clean" ]; then
   clean
 elif [ "$1" == "conf" ]; then
   conf
+elif [ "$1" == "conf_ninja" ]; then
+  shift
+  conf_ninja "$@"
+elif [ "$1" == "conf_unix" ]; then
+  shift
+  conf_unix "$@"
 else
-  if [ ! -d "build" ]; then
-    conf
-  fi
   build
 fi
