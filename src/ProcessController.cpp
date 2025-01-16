@@ -14,10 +14,6 @@ void displayCompilationInfo(const char *appName)
     std::cout << "*******************************************" << std::endl;
 }
 
-
-// Declare a static instance to trigger the display
-
-
 auto main(int argc, char *argv[]) -> int
 {
 
@@ -25,21 +21,19 @@ auto main(int argc, char *argv[]) -> int
 
     int         numProcesses = 4;
     std::string processType  = "simul";
-    int         rndUpper     = 10; // Default value for rndUpper
 
-    cli::driver::parseArguments(argc, argv, numProcesses, processType, rndUpper);
+    cli::driver::parseArguments(argc, argv, numProcesses, processType);
 
     tools::LoggerManager::createLoggerType();
-
-    cli::driver::printHelp(); // Call to printHelp
-
 
     std::thread readerThread(cli::driver::main);
 
     auto& sem = tools::SemaphoreGuard::getInstance();
+
     process::Controller::run(processType, numProcesses);
 
     readerThread.join(); // Ensure the reader thread is joined before exiting
+
     sem.unlinkSemaphore(sem.getName());
 
     cli::driver::printpid("[INFO] Main process exiting", "");

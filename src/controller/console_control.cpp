@@ -15,6 +15,7 @@ namespace cli::driver
     void intPid(const std::string &input);
     void doCommand(const std::string &input);
     void printContext(int numProcesses = -1, const std::string &processType = "", int rndUpper = -1);
+    void printHelp();
 
     template <typename T>
     void printpid(const std::string& str, const T& x)
@@ -38,8 +39,10 @@ namespace cli::driver
         tools::LoggerManager::consoleLogger().flush(tools::LogLevel::WARNING);
     }
 
-    void parseArguments(int argc, char *argv[], int &numProcesses, std::string &processType, int &rndUpper)  
+    void parseArguments(int argc, char *argv[], int &numProcesses, std::string &processType)  
     {
+        int rndUpper = 10; // Default value for rndUpper
+
         int opt;
         while ((opt = getopt(argc, argv, "n:t:r:s:l:h")) != -1)
         {
@@ -102,6 +105,7 @@ namespace cli::driver
             }
         }
         printContext(numProcesses, processType, rndUpper);
+        printHelp(); // Call to printHelp
     }
 
     void printContext(int numProcesses, const std::string &processType, int rndUpper)
