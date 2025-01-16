@@ -43,12 +43,14 @@ namespace process
 
             if (!response_stream || http_version.substr(0, 5) != "HTTP/")
             {
-                std::cerr << "Invalid response\n";
+                tools::LoggerManager::getInstance() << "Invalid response";
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
                 return;
             }
             if (status_code != 200)
             {
-                std::cerr << "Response returned with status code " << status_code << "\n";
+                tools::LoggerManager::getInstance() << "Response returned with status code " << status_code;
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
                 return;
             }
 
@@ -57,20 +59,29 @@ namespace process
             std::string header;
             while (std::getline(response_stream, header) && header != "\r")
             {
-                std::cout << header << "\n";
+                tools::LoggerManager::getInstance() << header;
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
             }
 
             // Write the remaining response to the output
             if (response.size() > 0)
             {
-                std::cout << &response;
+                std::istream remaining_stream(&response);
+                std::string  remaining_content((std::istreambuf_iterator<char>(remaining_stream)),
+                                               std::istreambuf_iterator<char>());
+                tools::LoggerManager::getInstance() << remaining_content;
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
             }
 
             // Read until EOF
             asio::error_code error;
             while (asio::read(socket, response, asio::transfer_at_least(1), error))
             {
-                std::cout << &response;
+                std::istream response_stream(&response);
+                std::string  content((std::istreambuf_iterator<char>(response_stream)),
+                                     std::istreambuf_iterator<char>());
+                tools::LoggerManager::getInstance() << content;
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
             }
             if (error != asio::error::eof)
             {
@@ -79,10 +90,10 @@ namespace process
         }
         catch (const std::exception &e)
         {
-            std::cerr << "Exception: " << e.what() << "\n";
+            tools::LoggerManager::getInstance() << "Exception: " << e.what();
+            tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
         }
     }
-
 
     void NetworkProcess::work()
     {
