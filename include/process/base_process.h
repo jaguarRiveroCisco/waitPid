@@ -19,14 +19,11 @@ namespace process
 
     protected:
         virtual ~BaseProcess() = default;
+        BaseProcess();
+        void logLifetime() const;
 
         std::chrono::time_point<std::chrono::high_resolution_clock> startTime_ =
                 std::chrono::high_resolution_clock::now();
-
-        BaseProcess();
-
-        void logLifetime() const;
-
         static std::atomic<bool> continue_;
         static int exitCode_;
         std::string reason_ = "End of life";
