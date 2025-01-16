@@ -16,6 +16,7 @@ namespace process
 
         void work() override
         {
+            preWork();
             CURL *curl = curl_easy_init();
             if (curl)
             {
@@ -38,6 +39,7 @@ namespace process
             {
                 std::cerr << "Failed to initialize curl." << std::endl;
             }
+            postWork();
         }
     };
 

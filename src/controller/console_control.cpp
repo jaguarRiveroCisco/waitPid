@@ -61,7 +61,7 @@ namespace cli::driver
             case 't':
                 // Set the process type from the argument
                 processType = optarg;
-                if (processType != "real" && processType != "simul")
+                if (processType != "real" && processType != "simul" && processType != "network")
                 {
                     printpidW("Invalid process type defaulting to ", "simul");
                     processType = "simul";

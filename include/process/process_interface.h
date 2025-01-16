@@ -7,6 +7,9 @@ namespace process
     public:
         virtual ~IProcess() = default;
         virtual void work() = 0;
+    protected:
+        virtual void preWork() = 0;
+        virtual void postWork() = 0;
     };
 
 } // namespace process

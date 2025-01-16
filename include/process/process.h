@@ -10,6 +10,10 @@ namespace process
     public:
         virtual ~Process() = default;
         void work() override;
+
+    protected:
+        void preWork() override;
+        void postWork() override;
     };
 } // namespace process
 

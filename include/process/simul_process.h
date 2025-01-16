@@ -11,10 +11,14 @@ namespace process
         virtual ~ProcessSimulator() = default;
         static void setRndUpper(int rndUpper);
 
+    protected:
+        void preWork() override;
+        void postWork() override;
     private:
         void       setSleepDuration();
         static int rndUpper_;
         int        sleepDuration_ = 0;
+        int        msSleepDuration_ = 0;
     };
 } // namespace process
 

@@ -10,6 +10,26 @@ namespace process
     int           ProcessSimulator::rndUpper_ = 20;
     constexpr int baseSleepDuration           = 10;
 
+    void ProcessSimulator::preWork()
+    {
+        tools::LoggerManager::createLoggerType();
+        setSleepDuration();
+        Communicator::getInstance().sendCreationMessage(sleepDuration_);
+        msSleepDuration_ = sleepDuration_ * 1000;
+
+        tools::LoggerManager::getInstance().logInfo(
+                "[PROCESS EXECUTING] | Simulated Process started. Duration : " + std::to_string(sleepDuration_) +
+                " seconds (" + std::to_string(msSleepDuration_) + " ms)");
+    }
+
+    void ProcessSimulator::postWork()
+    {
+        // Add post-work code here
+
+        logLifetime();
+        _exit(exitCode_); // Ensure the child process exits immediately
+    }
+
     void ProcessSimulator::setRndUpper(int rndUpper)
     {
         rndUpper_ = rndUpper;
@@ -23,20 +43,12 @@ namespace process
 
     void ProcessSimulator::work()
     {
-        tools::LoggerManager::createLoggerType();
+        preWork();
 
-        setSleepDuration();
-        Communicator::getInstance().sendCreationMessage(sleepDuration_);
-
-        auto msSleepDuration = sleepDuration_ * 1000;
-        auto endTime         = startTime_ + std::chrono::milliseconds(msSleepDuration);
-
-        tools::LoggerManager::getInstance().logInfo(
-                "[PROCESS EXECUTING] | Simulated Process started. Duration : " + std::to_string(sleepDuration_) + " seconds (" +
-                std::to_string(msSleepDuration) + " ms)");
+        auto endTime = startTime_ + std::chrono::milliseconds(msSleepDuration_);
 
         // Maximum allowed lifetime to prevent indefinite execution
-        auto maxLifetime   = std::chrono::milliseconds(msSleepDuration + 5000); // Add a buffer to the sleep duration
+        auto maxLifetime   = std::chrono::milliseconds(msSleepDuration_ + 5000); // Add a buffer to the sleep duration
         auto currentTime   = std::chrono::high_resolution_clock::now();
 
         while (continue_)
@@ -62,8 +74,6 @@ namespace process
             std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Simulate some work
             currentTime = std::chrono::high_resolution_clock::now();
         }
-
-        logLifetime();
-        _exit(exitCode_); // Ensure the child process exits immediately
+        postWork();
     }
 } // namespace process
