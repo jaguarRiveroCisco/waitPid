@@ -1,11 +1,12 @@
 #include "console_control.h"
 #include <atomic>
-#include <unistd.h>
 #include <iostream>
 #include <string>
 #include <thread>
-#include "process_handler.h"
+#include <unistd.h>
 #include "logger_instance.h"
+#include "process_handler.h"
+#include "simul_process.h"
 
 namespace cli::driver
 {
@@ -73,7 +74,7 @@ namespace cli::driver
                     printpidW("Random upper limit must be >= than 10. Defaulting to ", 10);
                     rndUpper = 10;
                 }
-
+                process::ProcessSimulator::setRndUpper(rndUpper); // Call to setRndUpper with the parsed value
                 break;
     
             case 's':

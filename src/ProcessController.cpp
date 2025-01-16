@@ -1,13 +1,7 @@
-#include <atomic>
-#include <chrono>
 #include <iostream>
-#include <string>
 #include <thread>
-#include "process.h"
 #include "process_handler.h"
-#include "simul_process.h"
 #include "console_control.h"
-#include "logger_instance.h"
 #include "semaphore_guard.h"
 
 void displayCompilationInfo(const char *appName)
@@ -39,7 +33,6 @@ auto main(int argc, char *argv[]) -> int
 
     cli::driver::printHelp(); // Call to printHelp
 
-    process::ProcessSimulator::setRndUpper(rndUpper); // Call to setRndUpper with the parsed value
 
     std::thread readerThread(cli::driver::main);
 
