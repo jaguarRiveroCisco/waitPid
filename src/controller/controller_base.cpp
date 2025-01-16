@@ -31,7 +31,13 @@ namespace process
     
     void ControllerBase::createChild()
     {
-        pid_ = fork();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+        // Your code that uses vfork()
+        pid_t pid = vfork();
+
+#pragma clang diagnostic pop
         if (pid_ == 0)
         {
             //setupSignalHandling();

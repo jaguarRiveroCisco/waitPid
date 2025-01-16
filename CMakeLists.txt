@@ -12,10 +12,14 @@ include_directories(
     include/tools
     include/logger
     include/networkprocess
+    /opt/homebrew/Cellar/asio/1.30.2/include  # Add the ASIO include directory
 )
 
 # Find libcurl
 find_package(CURL REQUIRED)
+
+# Find threading libraries
+find_package(Threads REQUIRED)
 
 # Add executable
 add_executable(ProcessController 
@@ -48,5 +52,5 @@ add_executable(ProcessController
     src/logger/logger_instance.cpp
 )
 
-# Link libcurl
-target_link_libraries(ProcessController PRIVATE CURL::libcurl)
+# Link necessary libraries
+target_link_libraries(ProcessController PRIVATE CURL::libcurl Threads::Threads)
