@@ -139,8 +139,8 @@ namespace cli::driver
                   << "  context         - Display the current context\n"
                   << "  exit            - Sets exist signal to gracefully exits the program once the next child process is "
                      "done\n"
-                  << "  terminate all   - Terminate (SIGTERM) all processes and exit the program\n"
-                  << "  terminate <pid> - Terminate (SIGTERM) a specific process by PID\n"
+                  << "  term all   - Terminate (SIGTERM) all processes and exit the program\n"
+                  << "  term <pid> - Terminate (SIGTERM) a specific process by PID\n"
                   << "  int all         - Interrupt (SIGINT) all processes and exit the program\n"
                   << "  int <pid>       - Interrupt (SIGINT) a specific process by PID\n"
                   << "  kill all        - Kill all (SIGKILL) processes and exit the program\n"
@@ -188,7 +188,7 @@ namespace cli::driver
         }
         else if (input.rfind("term ", 0) == 0)
         {
-            printpid("[TERMINATE] Terminating process with PID:", input.substr(10));
+            printpid("[TERMINATE] Terminating process with PID:", input.substr(5));
             terminatePid(input);
         }
         else if (input == "int all")
@@ -200,7 +200,7 @@ namespace cli::driver
         else if (input.rfind("int ", 0) == 0)
         {
             printpid("[INT] Interrupting process with PID:", input.substr(4));
-            int(input);
+            intPid(input);
         }
         else if (input == "kill all")
         {
@@ -258,7 +258,7 @@ namespace cli::driver
     {
         try
         {
-            pid_t pid = std::stoi(input.substr(10)); // Extract PID from input
+            pid_t pid = std::stoi(input.substr(5)); // Extract PID from input
             process::Controller::terminateProcessByPid(pid);
         }
         catch (const std::invalid_argument &)
