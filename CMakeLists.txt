@@ -11,6 +11,7 @@ include_directories(
     include/synchro
     include/tools
     include/logger
+    include/networkprocess
 )
 
 # Find libcurl
@@ -28,6 +29,8 @@ add_executable(ProcessController
     src/process/simul_process.cpp
     src/process/process.cpp
     src/process/base_process.cpp
+
+    src/networkprocess/network_process.cpp
 
     # Controller sources
     src/controller/process_handler.cpp

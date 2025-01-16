@@ -3,6 +3,7 @@
 #include "communicator.h"
 #include "process.h"
 #include "simul_process.h"
+#include "network_process.h"
 
 namespace process
 {
@@ -16,6 +17,14 @@ namespace process
         else if (processType_ == "simul")
         {
             handler->init(synchro(), std::make_unique<ProcessSimulator>());
+        }
+        else if (processType_ == "network")
+        {
+            handler->init(synchro(), std::make_unique<NetworkProcess>());
+        }
+        else
+        {
+            throw std::runtime_error("Invalid process type");
         }
 
         Communicator::getInstance().receiveCreationMessage();
