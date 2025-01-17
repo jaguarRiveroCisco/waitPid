@@ -61,7 +61,7 @@ namespace process
         }
     }
 
-    void  ControllerBase::start() { createCheckProcessThread(); }
+    void  ControllerBase::start() { startProcessMonitoringThread(); }
     
     bool &ControllerBase::running() { return running_; }
 
