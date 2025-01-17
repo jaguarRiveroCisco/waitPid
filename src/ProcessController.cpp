@@ -34,7 +34,7 @@ auto main(int argc, char *argv[]) -> int
 
     readerThread.join(); // Ensure the reader thread is joined before exiting
 
-    sem.unlinkSemaphore(sem.getName());
+    sem.unlinkSemaphore();
 
     cli::driver::printpid("[INFO] Main process exiting", "");
 

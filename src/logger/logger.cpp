@@ -33,6 +33,10 @@ namespace tools
     {
         log(LogLevel::ERROR, message);
     }
+    void Logger::logException(const std::string &message)
+    {
+        log(LogLevel::EXCEPTION, message);
+    }
     std::string Logger::logLevelToString(LogLevel level) const
     {
         switch (level)
@@ -43,6 +47,8 @@ namespace tools
                 return "WARNING";
             case LogLevel::ERROR:
                 return "ERROR";
+            case LogLevel::EXCEPTION:
+                return "EXCEPTION";
             default:
                 return "UNKNOWN";
         }

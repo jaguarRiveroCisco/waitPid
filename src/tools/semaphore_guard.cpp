@@ -2,13 +2,15 @@
 
 namespace tools
 {
-    SemaphoreGuard &SemaphoreGuard::getInstance(const std::string &name)
+    std::string SemaphoreGuard::sem_name = "/semaphore_guard";
+
+    SemaphoreGuard &SemaphoreGuard::getInstance()
     {
-        static SemaphoreGuard instance(name);
+        static SemaphoreGuard instance;
         return instance;
     }
 
-    SemaphoreGuard::SemaphoreGuard(const std::string &name) : sem_name(name)
+    SemaphoreGuard::SemaphoreGuard()
     {
         sem = sem_open(sem_name.c_str(), O_CREAT, 0644, 1);
         if (sem == SEM_FAILED)
@@ -47,9 +49,9 @@ namespace tools
     }
 
     // Separate function to unlink semaphore when appropriate
-    void SemaphoreGuard::unlinkSemaphore(const std::string &name)
+    void SemaphoreGuard::unlinkSemaphore()
     {
-        if (sem_unlink(name.c_str()) == -1)
+        if (sem_unlink(sem_name.c_str()) == -1)
         {
             perror("sem_unlink");
         }

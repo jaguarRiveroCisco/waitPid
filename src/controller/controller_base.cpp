@@ -31,13 +31,7 @@ namespace process
     
     void ControllerBase::createChild()
     {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-        // Your code that uses vfork()
-        pid_t pid = vfork();
-
-#pragma clang diagnostic pop
+        pid_t pid = fork();
         if (pid_ == 0)
         {
             //setupSignalHandling();
@@ -49,7 +43,7 @@ namespace process
             {
                 // Handle exceptions in child process
                 tools::LoggerManager::getInstance() << "Exception in child process: " << e.what();
-                tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::EXCEPTION);
                 _exit(EXIT_FAILURE); // Ensure child process exits
             }
         }

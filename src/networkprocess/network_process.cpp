@@ -6,8 +6,12 @@
 
 namespace process
 {
-    void network()
+
+
+
+    void NetworkProcess::work()
     {
+        preWork();
         try
         {
             asio::io_context io_context;
@@ -25,6 +29,7 @@ namespace process
             request += "Host: www.example.com\r\n";
             request += "Connection: close\r\n\r\n";
 
+tools::LoggerManager::getInstance() << "Sending request";
             // Send the request
             asio::write(socket, asio::buffer(request));
 
@@ -57,11 +62,13 @@ namespace process
             // Read the headers
             asio::read_until(socket, response, "\r\n\r\n");
             std::string header;
+            tools::LoggerManager::getInstance() << "Response returned with status code " << status_code;
             while (std::getline(response_stream, header) && header != "\r")
             {
                 tools::LoggerManager::getInstance() << header;
                 tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
             }
+            tools::LoggerManager::getInstance() << "Afterresponse_stream\n";
 
             // Write the remaining response to the output
             if (response.size() > 0)
@@ -91,48 +98,9 @@ namespace process
         catch (const std::exception &e)
         {
             tools::LoggerManager::getInstance() << "Exception: " << e.what();
-            tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
-        }
-    }
-
-    void NetworkProcess::work()
-    {
-        preWork();
-        network();
-        postWork();
-        return;
-        // while(continue_)
-        {
-            CURL *curl = curl_easy_init();
-            if (curl)
-            {
-                CURLcode res;
-                curl_easy_setopt(curl, CURLOPT_URL, "http://www.example.com");
-                res = curl_easy_perform(curl);
-
-                if (res != CURLE_OK)
-                {
-                    tools::LoggerManager::getInstance() << "curl_easy_perform() failed: " << curl_easy_strerror(res);
-                    tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
-                }
-                else
-                {
-                    tools::LoggerManager::getInstance() << "Request successful.";
-                    tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
-                }
-
-                curl_easy_cleanup(curl);
-            }
-            else
-            {
-                std::cerr << "Failed to initialize curl." << std::endl;
-                tools::LoggerManager::getInstance() << "Failed to initialize curl.";
-                tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
-            }
-            
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Simulate some work
+            tools::LoggerManager::getInstance().flush(tools::LogLevel::EXCEPTION);
         }
         postWork();
     }
 
-}
+} // namespace process
