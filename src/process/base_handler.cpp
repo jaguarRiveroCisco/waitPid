@@ -76,7 +76,9 @@ namespace process
     void BaseHandler::monitorProcessStatus()
     {
         int status = -1;
-        while (true)
+        tools::LoggerManager::getInstance() << "[PARENT PROCESS] Monitoring child process " << pid_ << ".";
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+        while (running_)
         {
             // Check if the process with PID = pid_ is running
             if (!isProcessRunning())
@@ -106,5 +108,7 @@ namespace process
                 break;
             }
         }
+        tools::LoggerManager::getInstance() << "[PARENT PROCESS] Monitoring thread for process " << pid_ << " exiting.";
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
     }
 } // namespace process

@@ -7,6 +7,7 @@ namespace process
     {
     public:
         pid_t getPid() const;
+        bool & running() { return running_; }
 
     protected:
         BaseHandler() = default;
@@ -21,6 +22,7 @@ namespace process
         void          monitorProcessStatus();
         pid_t         pid_{0};
         Synchro      *synchro_{nullptr};
+        bool      running_{true};
     };
 } // namespace process
 
