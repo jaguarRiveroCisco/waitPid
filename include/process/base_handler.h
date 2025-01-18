@@ -18,7 +18,7 @@ namespace process
         void          killProcess();
         void          intProcess();
         void          sendSignal(int signal);
-        void          createCheckProcessThread();
+        void          initializeProcessMonitoringThread();
         void          monitorProcessStatus();
         pid_t         pid_{0};
         Synchro      *synchro_{nullptr};

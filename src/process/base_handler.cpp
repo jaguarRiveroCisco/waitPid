@@ -56,7 +56,7 @@ namespace process
         }
     }
 
-    void BaseHandler::createCheckProcessThread()
+    void BaseHandler::initializeProcessMonitoringThread()
     {
         // Parent process
         // Create a thread to check the state of the child process
