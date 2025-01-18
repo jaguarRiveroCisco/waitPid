@@ -18,7 +18,7 @@ namespace process
         void          intProcess();
         void          sendSignal(int signal);
         void          createCheckProcessThread();
-        void          checkProcessState();
+        void          monitorProcessStatus();
         pid_t         pid_{0};
         Synchro      *synchro_{nullptr};
     };
