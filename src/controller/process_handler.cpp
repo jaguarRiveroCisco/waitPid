@@ -34,6 +34,8 @@ namespace process
 
     void Controller::createHandlers_(int numHandlers)
     {
+        tools::LoggerManager::getInstance() << "Creating " << numHandlers << " process handlers.";
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
         for (int i = 0; i < numHandlers; ++i)
         {
             try
@@ -47,6 +49,8 @@ namespace process
                 tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
             }
         }
+        tools::LoggerManager::getInstance() << "Created " << numHandlers << " process handlers.";
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
     }
 
     void Controller::createHandlers() { createHandlers_(numProcesses_); }

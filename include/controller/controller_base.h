@@ -28,6 +28,7 @@ namespace process
             static void     setLoggingType(LoggingType type);
             static LoggingType getLoggingType();
             static std::string loggingTypeToString(); // New method
+            static void         stopAllMonitors();
 
         protected:
             static std::vector<std::unique_ptr<ControllerBase>> handlers_;

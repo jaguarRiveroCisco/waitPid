@@ -7,7 +7,7 @@ namespace process
     {
     public:
         pid_t getPid() const;
-        std::atomic<bool> &running() { return running_; }
+        std::atomic<bool> &monitoring() { return monitoring_; }
 
     protected:
         BaseHandler() = default;
@@ -22,7 +22,7 @@ namespace process
         void          monitorProcessStatus();
         pid_t         pid_{0};
         Synchro      *synchro_{nullptr};
-        std::atomic<bool> running_{true};
+        std::atomic<bool> monitoring_{true};
     };
 } // namespace process
 

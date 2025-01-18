@@ -12,8 +12,8 @@ namespace process
     {
         if (WIFEXITED(status))
         {
-            tools::LoggerManager::getInstance() << "[PARENT PROCESS] Child process " << pid_
-                                                << " exited normally with status " << WEXITSTATUS(status) << ".";
+            tools::LoggerManager::getInstance() << "[PARENT PROCESS] child process exited normally with status " 
+                << WEXITSTATUS(status) << " PID: " << pid_;
             tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
         }
         else if (WIFSIGNALED(status))
@@ -76,7 +76,9 @@ namespace process
     void BaseHandler::monitorProcessStatus()
     {
         int status = -1;
-        while (running_)
+        tools::LoggerManager::getInstance() << "[PARENT PROCESS] Monitoring child process with PID: " << pid_;
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+        while (monitoring_)
         {
             // Check if the process with PID = pid_ is running
             if (!isProcessRunning())
@@ -106,5 +108,7 @@ namespace process
                 break;
             }
         }
+        tools::LoggerManager::getInstance() << "[PARENT PROCESS] Monitoring thread for PID: " << pid_ << " exiting.";
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
     }
 } // namespace process

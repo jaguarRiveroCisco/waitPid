@@ -154,6 +154,7 @@ namespace cli::driver
                   << "  display pids    - Display all current PIDs\n"
                   << "  respawn on      - Turn on respawn\n"
                   << "  respawn off     - Turn off respawn\n"
+                  << "  stop monitors   - Stop monitoring the child processes\n"
                   << "  help            - Display this help message\n\n"
                   << "==========================================================\n\n"
                   << std::flush;
@@ -236,6 +237,11 @@ namespace cli::driver
         {
             process::ControllerBase::respawn() = false;
             printpid("[RESPAWN] Respawn feature is now", "OFF");
+        }
+        else if (input == "stop monitors")
+        {
+            process::Controller::stopAllMonitors();
+            printpid("[MONITOR] Stopping all process monitors.", "");
         }
         else
         {

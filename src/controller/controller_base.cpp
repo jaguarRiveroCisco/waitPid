@@ -96,6 +96,14 @@ namespace process
         tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
     }
 
+    void ControllerBase::stopAllMonitors()
+    {
+        for (auto &handler: handlers_)
+        {
+            handler->monitoring() = false;
+        }
+    }
+
     void ControllerBase::killAll()
     {
         for (auto &handler: handlers_)
