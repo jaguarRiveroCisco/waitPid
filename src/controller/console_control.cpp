@@ -62,6 +62,11 @@ namespace cli::driver
                         printpidW("Invalid process type defaulting to ", "simul");
                         processType = "simul";
                     }
+                    if(processType == "network")
+                    {
+                        printpidW("[TEMPORARY] Network process type is not implemented. Defaulting to ", "simul");
+                        processType = "simul";
+                    }
                     break;
                 case 'r':
                     // Set the random upper limit from the argument
