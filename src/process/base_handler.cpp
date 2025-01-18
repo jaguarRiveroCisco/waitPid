@@ -76,7 +76,7 @@ namespace process
     void BaseHandler::monitorProcessStatus()
     {
         int status = -1;
-        while (true)
+        while (running_)
         {
             // Check if the process with PID = pid_ is running
             if (!isProcessRunning())
