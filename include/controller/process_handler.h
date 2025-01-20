@@ -12,8 +12,7 @@ namespace process
     private:
         static void waitForEvents();
         static void restoreHandlerCount();
-        static void createHandlers();
-        static void createHandlers_(int numHandlers);
+        static void createHandlers(int numHandlers);
         static void createHandler();
         static void removeHandler();
         static void startMonitoring();
