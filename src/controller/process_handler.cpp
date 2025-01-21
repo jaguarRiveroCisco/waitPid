@@ -56,8 +56,11 @@ namespace process
     {
         for (auto &handler : handlers_)
         {
-            handler->createMonitorProcessThread();
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            if(!handler->monitoring())
+            {
+                handler->createMonitorProcessThread();
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
         }
     }
 
@@ -70,22 +73,67 @@ namespace process
         waitForEvents();
     }
 
-    void Controller::removeHandler()
+    void Controller::printHandlers()
+    {
+        tools::LoggerManager::getInstance() << "\nCurrent PIDs:";
+        concurrency::Synchro::getInstance().printPidQueue();
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+        tools::LoggerManager::getInstance() << "\nCurrent handlers:";
+        for (const auto &handler : handlers_)
+        {
+            tools::LoggerManager::getInstance() << "\nHandler PID: " << handler->getPid();
+        }
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+    }
+
+       void Controller::removeHandler()
     {
         if (!handlers_.empty())
         {
             pid_t pid = concurrency::Synchro::getInstance().removeFrontPid();
+            tools::LoggerManager::getInstance() << "[PARENT PROCESS] Removing handler with PID: " << pid;
+            tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+    
             if (pid != -1)
             {
                 // Find and remove the handler with the matching PID
                 auto it = std::remove_if(
-                        handlers_.begin(), handlers_.end(),
-                        [pid](const std::unique_ptr<ControllerBase> &handler) { return handler->getPid() == pid; });
+                    handlers_.begin(), handlers_.end(),
+                    [pid](const std::unique_ptr<ControllerBase> &handler) { return handler->getPid() == pid; });
+    
                 if (it != handlers_.end())
                 {
+                    tools::LoggerManager::getInstance() << "[PARENT PROCESS] Handler pid: " << (*it)->getPid() << " to be removed.";
+                    tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+    
+                    if (*it)
+                    {
+                        (*it)->stopMonitoring();
+                    }
+                    else
+                    {
+                        tools::LoggerManager::getInstance() << "[PARENT PROCESS] Null handler found.";
+                        tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
+                    }
+    
                     handlers_.erase(it, handlers_.end());
                 }
+                else
+                {
+                    tools::LoggerManager::getInstance() << "[PARENT PROCESS] No handler found with PID: " << pid;
+                    tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
+                }
             }
+            else
+            {
+                tools::LoggerManager::getInstance() << "[PARENT PROCESS] Invalid PID: " << pid;
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
+            }
+        }
+        else
+        {
+            tools::LoggerManager::getInstance() << "[PARENT PROCESS] No handlers to remove.";
+            tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
         }
     }
 
@@ -95,28 +143,38 @@ namespace process
         {
             concurrency::Synchro::getInstance().blockUntilPidAvailable();
 
+            printHandlers();
+
             // Process all events
             while (!concurrency::Synchro::getInstance().isPidQueueEmpty())
             {
                 removeHandler();
-                restoreHandlerCount();
-                if (handlers_.empty())
-                {
-                    process::Controller::running() = false;
-                    tools::LoggerManager::getInstance() << "[PARENT PROCESS] All handlers removed, exiting...";
-                    tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
-                }
+            }
+            //if (process::Controller::respawn())
+             //   restoreHandlerCount();
+            if (handlers_.empty())
+            {
+                process::Controller::running() = false;
+                tools::LoggerManager::getInstance() << "[PARENT PROCESS] All handlers removed, exiting...";
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
             }
         }
     }
 
     void Controller::restoreHandlerCount()
     {
-        // Check if the number of handlers is less than numProcesses_
-        if (process::Controller::respawn() && (handlers_.size() < numProcesses_))
+        if (!process::Controller::running())
+            return;
+        tools::LoggerManager::getInstance()
+                << "[PARENT PROCESS RESTORING] Restoring handler count:"
+                // Check if the number of handlers is less than numProcesses_
+                << " Number of handlers: " << handlers_.size() << " Number of processes: " << numProcesses_;
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+        if (handlers_.size() < numProcesses_)
         {
             int numHandlersToCreate = numProcesses_ - handlers_.size();
             createHandlers(numHandlersToCreate);
+            startMonitoring();
         }
     }
 

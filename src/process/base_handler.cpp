@@ -12,20 +12,20 @@ namespace process
     {
         if (WIFSTOPPED(status))
         {
-            tools::LoggerManager::getInstance().logWarning("[PARENT PROCESS][MONITORING THREAD] " + tid + " Child process " + std::to_string(pid_) + " was stopped by signal " + std::to_string(WSTOPSIG(status)) + ".");}
+            tools::LoggerManager::getInstance().logWarning("[PARENT PROCESS][MONITORING THREAD] " + tid + " [END] Child process " + std::to_string(pid_) + " was stopped by signal " + std::to_string(WSTOPSIG(status)) + ".");}
         else if (WIFEXITED(status))
         {
-            tools::LoggerManager::getInstance().logInfo("[PARENT PROCESS][MONITORING THREAD] " + tid + " Child process " + std::to_string(pid_)
+            tools::LoggerManager::getInstance().logInfo("[PARENT PROCESS][MONITORING THREAD] " + tid + " [END] Child process " + std::to_string(pid_)
                                                         + " exited normally with status " + std::to_string(WEXITSTATUS(status)) + ".");
         }
         else if (WIFSIGNALED(status))
         {
-            tools::LoggerManager::getInstance().logWarning("[PARENT PROCESS][MONITORING THREAD] " + tid + " Child process " + std::to_string(pid_)
+            tools::LoggerManager::getInstance().logWarning("[PARENT PROCESS][MONITORING THREAD] " + tid + " [END] Child process " + std::to_string(pid_)
                                                            + " was terminated by signal " + std::to_string(WTERMSIG(status)) + ".");
         }
         else
         {
-            tools::LoggerManager::getInstance().logError("[PARENT PROCESS][MONITORING THREAD] " + tid + " Child process " + std::to_string(pid_)
+            tools::LoggerManager::getInstance().logError("[PARENT PROCESS][MONITORING THREAD] " + tid + " [END] Child process " + std::to_string(pid_)
                                                            + " exited with an unknown status.");
         }
     }
@@ -73,12 +73,27 @@ namespace process
         }
     }
 
+    void BaseHandler::stopMonitoring()
+    {
+        static std::mutex monitorMutex_;
+        std::lock_guard<std::mutex> lock(monitorMutex_);
+        if(!monitoring_)
+            return;
+        monitoring_ = false;
+        while (threadRunning_)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(Nap::TIME));
+        }
+    }
+
     void BaseHandler::monitorProcessThread()
     {
-        int status = -1;
+        monitoring_              = true;
+        threadRunning_           = true;
+        int               status = -1;
         std::stringstream ss;
         ss << std::this_thread::get_id();
-        tools::LoggerManager::getInstance().logInfo("[PARENT PROCESS][MONITORING THREAD] " + ss.str() + " started for process " + std::to_string(pid_));
+        tools::LoggerManager::getInstance().logInfo("[PARENT PROCESS][MONITORING THREAD] " + ss.str() + " [START] for process " + std::to_string(pid_));
         tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
         while (monitoring_)
         {
@@ -90,13 +105,12 @@ namespace process
             if (result == 0)
             {
                 // Child still running
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(Nap::TIME));
             }
             else if (result == pid_)
             {
                 displayProcessStatus(status, ss.str());
                 concurrency::Synchro::getInstance().pushPid(pid_);
-                monitoring_ = false;
                 break;
             }
             else
@@ -106,5 +120,7 @@ namespace process
                 break;
             }
         }
+        monitoring_ = false;
+        threadRunning_ = false;
     }
 } // namespace process

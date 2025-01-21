@@ -1,4 +1,5 @@
 #include "synchro.h"
+#include "logger_instance.h"
 namespace concurrency
 {
     Synchro &Synchro::getInstance()
@@ -14,6 +15,19 @@ namespace concurrency
         cv_.notify_one();
     }
 
+    // Print all elements in the queue
+    void Synchro::printPidQueue()
+    {
+        std::lock_guard<std::mutex> lock(mtx_);
+        std::queue<pid_t> tempQueue = pidQueue_; // Create a copy of the queue
+        while (!tempQueue.empty())
+        {
+            pid_t pid = tempQueue.front();
+            tempQueue.pop();
+            tools::LoggerManager::getInstance() << pid << " ";
+        }
+        tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+    }
     // Get and pop the front element of the queue
     pid_t Synchro::removeFrontPid()
     {

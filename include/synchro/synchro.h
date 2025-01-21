@@ -23,6 +23,8 @@ namespace concurrency
         // Check if the queue is empty
         bool isPidQueueEmpty();
 
+        void printPidQueue();
+
         static Synchro &getInstance();
 
     private:
