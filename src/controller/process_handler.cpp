@@ -150,8 +150,8 @@ namespace process
             {
                 removeHandler();
             }
-            //if (process::Controller::respawn())
-             //   restoreHandlerCount();
+            if (process::Controller::respawn())
+                restoreHandlerCount();
             if (handlers_.empty())
             {
                 process::Controller::running() = false;
@@ -165,16 +165,33 @@ namespace process
     {
         if (!process::Controller::running())
             return;
+    
         tools::LoggerManager::getInstance()
-                << "[PARENT PROCESS RESTORING] Restoring handler count:"
-                // Check if the number of handlers is less than numProcesses_
-                << " Number of handlers: " << handlers_.size() << " Number of processes: " << numProcesses_;
+            << "[PARENT PROCESS RESTORING] Restoring handler count:"
+            << " Number of handlers: " << handlers_.size() << " Number of processes: " << numProcesses_;
         tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+    
         if (handlers_.size() < numProcesses_)
         {
             int numHandlersToCreate = numProcesses_ - handlers_.size();
-            createHandlers(numHandlersToCreate);
-            startMonitoring();
+            tools::LoggerManager::getInstance() << "[PARENT PROCESS RESTORING] Creating " << numHandlersToCreate << " new handlers.";
+            tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
+    
+            try
+            {
+                createHandlers(numHandlersToCreate);
+                startMonitoring();
+            }
+            catch (const std::exception &e)
+            {
+                tools::LoggerManager::getInstance() << "[PARENT PROCESS RESTORING] Error creating handlers: " << e.what();
+                tools::LoggerManager::getInstance().flush(tools::LogLevel::ERROR);
+            }
+        }
+        else
+        {
+            tools::LoggerManager::getInstance() << "[PARENT PROCESS RESTORING] No need to create new handlers.";
+            tools::LoggerManager::getInstance().flush(tools::LogLevel::INFO);
         }
     }
 
