@@ -5,7 +5,7 @@
 #include "thread_controller.h"
 namespace cli::driver
 {
-    class CLIController : public ThreadController 
+    class CLIController : public tools::ThreadController 
     {
     protected:
         void runThread() override;

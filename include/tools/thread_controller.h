@@ -8,7 +8,7 @@
 #include <iostream>
 #include <thread>
 
-namespace cli::driver
+namespace tools
 {
     class ThreadController 
     {

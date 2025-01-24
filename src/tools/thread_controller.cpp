@@ -1,6 +1,6 @@
 #include "thread_controller.h"
 
-namespace cli::driver
+namespace tools
 {
     void ThreadController::run(std::function<void(const std::string &)> commandFunc)
     {
