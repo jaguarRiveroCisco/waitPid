@@ -28,7 +28,6 @@ namespace cli::driver
     private:
         std::thread readerThread;
     };
-
 } // namespace cli::driver
 
 #endif // CONTROLLER_COMMAND_CONTROLLER_H
